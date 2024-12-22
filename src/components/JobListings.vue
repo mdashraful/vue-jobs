@@ -6,17 +6,22 @@ import { ref, defineProps } from 'vue';
 const jobs = ref(jobsData);
 const allJobs = jobs.value.jobs;
 
-defineProps({
+const props = defineProps({
     limit: {
         type: Number,
         default: 5,
     },
+
+    // showMoreButton: {
+    //     type: Boolean,
+    //     default: false,
+    // }
 });
-console.log(limit);
+// console.log(props.limit);
 const showMoreButton = () => {
-    if (limit) {
-        if (allJobs.length > limit) {
-            return false;
+    if (props.limit) {
+        if (allJobs.length > props.limit) {
+            return true;
         }
         else {
             return false;
@@ -39,7 +44,7 @@ const showMoreButton = () => {
         </div>
     </section>
 
-    <section class="m-auto max-w-lg my-10 px-6">
+    <section v-if="showMoreButton()" class="m-auto max-w-lg my-10 px-6">
         <a href="/jobs" class="block bg-black text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700">
             View All Jobs
         </a>
