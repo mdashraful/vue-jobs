@@ -7,7 +7,7 @@ const tasks = ref(['Task one', 'Task Two', 'Task Three']);
 const newTask = ref('');
 
 const toggleStatus = () => {
-  if (status.value == 'active') {
+  if (status.value === 'active') {
     status.value = 'pending'
   } else if (status.value == 'pending') {
     status.value = 'inactive'
