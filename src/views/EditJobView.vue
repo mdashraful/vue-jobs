@@ -1,8 +1,17 @@
 <script setup>
 import axios from 'axios';
-import { reactive } from 'vue';
-import router from '@/router';
+import { onMounted, reactive } from 'vue';
 import { useToast } from 'vue-toastification';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+const jobId = route.params.id;
+
+const state = reactive({
+    job: {},
+    isLoading: true
+});
 
 const form = reactive({
     type: 'Full-Time',
@@ -15,12 +24,11 @@ const form = reactive({
         description: "",
         contactEmail: "",
         contactPhone: ""
-    },
-
-
+    }
 });
+
 const handelSubmit = async () => {
-    const newJOb = {
+    const updatedJob = {
         type: form.type,
         title: form.title,
         location: form.location,
@@ -37,15 +45,32 @@ const handelSubmit = async () => {
     const toast = useToast();
 
     try {
-        const response = await axios.post('/api/jobs', newJOb);
+        const response = await axios.put(`/api/jobs/${jobId}`, updatedJob);
         router.push(`/jobs/${response.data.id}`);
-        toast.success('Job Created Successfully');
+        toast.success('Job Updated Successfully');
     } catch (error) {
         console.log(error);
     }
-
-    // console.log(newJOb);
 }
+
+onMounted(async () => {
+    try {
+        const response = await axios.get(`/api/jobs/${jobId}`);
+        state.job = response.data;
+
+        form.type = state.job.type,
+            form.title = state.job.title,
+            form.location = state.job.location,
+            form.description = state.job.description,
+            form.salary = state.job.salary,
+            form.company.name = state.job?.company?.name,
+            form.company.description = state.job?.company?.description,
+            form.company.contact_email = state.job?.company?.contactEmail,
+            form.company.contact_phone = state.job?.company?.contactPhone
+    } catch (error) {
+        console.log(error);
+    }
+});
 </script>
 
 <template>
@@ -53,7 +78,7 @@ const handelSubmit = async () => {
         <div class="container m-auto max-w-2xl py-24">
             <div class="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
                 <form @submit.prevent="handelSubmit">
-                    <h2 class="text-3xl text-center font-semibold mb-6">Add Job</h2>
+                    <h2 class="text-3xl text-center font-semibold mb-6">Edit Job</h2>
 
                     <div class="mb-4">
                         <label for="type" class="block text-gray-700 font-bold mb-2">Job Type</label>
@@ -136,7 +161,7 @@ const handelSubmit = async () => {
                         <button
                             class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline"
                             type="submit">
-                            Add Job
+                            Update Job
                         </button>
                     </div>
                 </form>
