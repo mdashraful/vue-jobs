@@ -3,6 +3,9 @@ import HomeView from "@/views/HomeView.vue";
 import JobsView from "@/views/JobsView.vue";
 import JobView from "@/views/JobView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
+import AddJobView from "@/views/AddJobView.vue";
+import { ref } from "vue";
+import EditJobView from "@/views/EditJobView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.BASE_URL),
@@ -18,16 +21,34 @@ const router = createRouter({
       component: JobsView,
     },
     {
-      path: '/jobs/:id',
-      name: 'job-view',
-      component: JobView
+      path: "/jobs/:id",
+      name: "job-view",
+      component: JobView,
     },
     {
-      path: '/:catchAll(.*)',
-      name: 'not-found',
-      component: NotFoundView
-    }
+      path: "/job/add",
+      name: "job-add",
+      component: AddJobView,
+    },
+    {
+      path: "/job/edit/:id",
+      name: "job-edit",
+      component: EditJobView,
+    },
+    {
+      path: "/:catchAll(.*)",
+      name: "not-found",
+      component: NotFoundView,
+    },
   ],
+});
+
+// Reactive previous URL tracker
+export const previousUrl = ref("");
+
+router.beforeEach((to, from, next) => {
+  previousUrl.value = from.fullPath; // Update the previous URL
+  next();
 });
 
 export default router;
